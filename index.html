@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>책나무 — 읽을수록 자라는 독서 기록</title>
+  <meta name="description" content="책 한 권을 기록할 때마다 나무가 자라는 독서 기록장" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 30V17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M16 18c-6 0-9-4-9-9 5 0 9 3 9 9zM16 15c0-6 3-10 9-11 0 6-3 10-9 11z" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1>책나무</h1>
+        <p class="tagline">한 권을 기록할 때마다, 나무가 한 뼘씩 자라요</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 나무 -->
+    <section class="tree-panel" aria-label="나의 독서 나무">
+      <div class="sky" id="sky">
+        <svg id="tree" role="img" aria-label="독서 나무" preserveAspectRatio="xMidYMax meet"></svg>
+        <div class="stage-badge">
+          <span class="stage-name" id="stageName">씨앗</span>
+          <span class="stage-count" id="stageCount">0권</span>
+        </div>
+      </div>
+      <div class="stage-info">
+        <p class="stage-desc" id="stageDesc"></p>
+        <div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+        <p class="stage-next" id="stageNext"></p>
+        <ul class="legend" id="legend"></ul>
+      </div>
+    </section>
+
+    <!-- 기록 -->
+    <section class="side">
+      <dl class="stats">
+        <div><dt>전체</dt><dd id="statTotal">0</dd></div>
+        <div><dt>올해</dt><dd id="statYear">0</dd></div>
+        <div><dt>이번 달</dt><dd id="statMonth">0</dd></div>
+        <div><dt>평균 별점</dt><dd id="statAvg">–</dd></div>
+      </dl>
+
+      <form class="card record-form" id="recordForm" autocomplete="off">
+        <h2 id="formTitle">새 기록 남기기</h2>
+        <label class="field full">
+          <span>책 제목 <em>*</em></span>
+          <input id="fTitle" required maxlength="120" placeholder="예) 아몬드" />
+        </label>
+        <label class="field">
+          <span>저자</span>
+          <input id="fAuthor" maxlength="80" placeholder="예) 손원평" />
+        </label>
+        <label class="field">
+          <span>장르 <small>(잎 색깔)</small></span>
+          <select id="fGenre"></select>
+        </label>
+        <label class="field">
+          <span>다 읽은 날</span>
+          <input id="fDate" type="date" />
+        </label>
+        <div class="field">
+          <span id="ratingLabel">별점 <small>(★5는 꽃으로 피어요)</small></span>
+          <div class="stars" id="fRating" role="radiogroup" aria-labelledby="ratingLabel"></div>
+        </div>
+        <label class="field full">
+          <span>마음에 남은 문장</span>
+          <textarea id="fQuote" rows="2" maxlength="500" placeholder="밑줄 긋고 싶었던 한 문장"></textarea>
+        </label>
+        <label class="field full">
+          <span>감상</span>
+          <textarea id="fNote" rows="4" maxlength="5000" placeholder="읽고 나서 든 생각을 자유롭게"></textarea>
+        </label>
+        <div class="form-actions full">
+          <button type="button" class="btn ghost" id="cancelEdit" hidden>취소</button>
+          <button type="submit" class="btn primary" id="submitBtn">기록하고 나무 키우기</button>
+        </div>
+      </form>
+
+      <section class="card shelf">
+        <div class="shelf-head">
+          <h2>나의 책장</h2>
+          <div class="filters">
+            <input id="search" type="search" placeholder="제목, 저자, 문장 검색" aria-label="검색" />
+            <select id="genreFilter" aria-label="장르 필터"></select>
+          </div>
+        </div>
+        <ul class="book-list" id="bookList"></ul>
+        <p class="empty" id="emptyMsg" hidden></p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>기록은 이 브라우저에만 저장돼요. 다른 기기로 옮기거나 지키려면 백업해 두세요.</p>
+    <div class="footer-actions">
+      <button class="btn ghost small" id="exportBtn">백업 내보내기</button>
+      <label class="btn ghost small">
+        백업 불러오기
+        <input type="file" id="importFile" accept="application/json,.json" hidden />
+      </label>
+    </div>
+  </footer>
+
+  <dialog id="detail" class="detail">
+    <article>
+      <header>
+        <p class="detail-meta" id="dMeta"></p>
+        <h3 id="dTitle"></h3>
+        <p class="detail-author" id="dAuthor"></p>
+        <p class="detail-stars" id="dStars"></p>
+      </header>
+      <blockquote id="dQuote"></blockquote>
+      <p class="detail-note" id="dNote"></p>
+      <footer>
+        <button class="btn danger small" id="dDelete">삭제</button>
+        <span class="spacer"></span>
+        <button class="btn ghost small" id="dEdit">수정</button>
+        <button class="btn primary small" id="dClose">닫기</button>
+      </footer>
+    </article>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="tree.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
